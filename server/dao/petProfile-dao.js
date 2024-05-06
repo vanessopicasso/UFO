@@ -83,7 +83,6 @@ function addPlanToProfile(petProfileId, planId) {
       throw { code: "petProfileNotFound", message: `Pet profile ${petProfileId} not found` };
     }
 
-    petProfile.plans = petProfile.plans || [];
     petProfile.plans.push(planId);
 
     update(petProfile);

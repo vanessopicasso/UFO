@@ -1,6 +1,6 @@
 const planDao = require("../../dao/plan-dao.js");
 
-async function ListAbl(req, res) {
+async function ListPlans(req, res) {
   try {
     const planList = planDao.list();
 
@@ -10,4 +10,4 @@ async function ListAbl(req, res) {
   }
 }
 
-module.exports = ListAbl;
+module.exports = ListPlans;

@@ -15,11 +15,11 @@ const schema = {
   additionalProperties: false,
 };
 
-async function CreateAbl(req, res) {
+async function CreateUser(req, res) {
   try {
     let user = req.body;
 
-    // validate input
+    // Validate input
     const valid = ajv.validate(schema, user);
     if (!valid) {
       res.status(400).json({
@@ -33,13 +33,14 @@ async function CreateAbl(req, res) {
     const userList = userDao.list();
     const emailExists = userList.some((u) => u.email === user.email);
     if (emailExists) {
-      res.status(400).json({
+      res.status(409).json({
         code: "emailAlreadyExists",
         message: `User with email ${user.email} already exists`,
       });
       return;
     }
 
+    // Create user
     user = userDao.create(user);
     res.json(user);
   } catch (e) {
@@ -47,4 +48,4 @@ async function CreateAbl(req, res) {
   }
 }
 
-module.exports = CreateAbl;
+module.exports = CreateUser;

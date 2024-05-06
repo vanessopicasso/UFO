@@ -1,6 +1,6 @@
 const petProfileDao = require("../../dao/petProfile-dao.js");
 
-async function ListAbl(req, res) {
+async function ListPetProfile(req, res) {
   try {
     const petProfileList = petProfileDao.list();
 
@@ -10,4 +10,4 @@ async function ListAbl(req, res) {
   }
 }
 
-module.exports = ListAbl;
+module.exports = ListPetProfile;

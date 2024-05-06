@@ -36,13 +36,14 @@ async function UpdateAbl(req, res) {
       (u) => u.email === user.email && u.id !== user.id
     );
     if (emailExists) {
-      res.status(400).json({
+      res.status(409).json({
         code: "emailAlreadyExists",
         message: `User with email ${user.email} already exists`,
       });
       return;
     }
 
+    // Update user
     const updatedUser = userDao.update(user);
     if (!updatedUser) {
       res.status(404).json({

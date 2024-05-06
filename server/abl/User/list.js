@@ -1,6 +1,6 @@
 const userDao = require("../../dao/user-dao.js");
 
-async function ListAbl(req, res) {
+async function ListUsers(req, res) {
   try {
     const userList = userDao.list();
     res.json(userList);
@@ -9,4 +9,4 @@ async function ListAbl(req, res) {
   }
 }
 
-module.exports = ListAbl;
+module.exports = ListUsers;

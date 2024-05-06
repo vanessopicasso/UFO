@@ -12,12 +12,12 @@ const schema = {
   additionalProperties: false,
 };
 
-async function DeleteAbl(req, res) {
+async function DeleteUser(req, res) {
   try {
-    // get request query or body
+    // Get request query or body
     const reqParams = req.body;
 
-    // validate input
+    // Validate input
     const valid = ajv.validate(schema, reqParams);
     if (!valid) {
       res.status(400).json({
@@ -28,6 +28,7 @@ async function DeleteAbl(req, res) {
       return;
     }
 
+    // Remove user
     userDao.remove(reqParams.id);
 
     res.json({});
@@ -36,4 +37,4 @@ async function DeleteAbl(req, res) {
   }
 }
 
-module.exports = DeleteAbl;
+module.exports = DeleteUser;

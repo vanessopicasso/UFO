@@ -5,6 +5,8 @@ addFormats(ajv);
 
 const activityDao = require("../../dao/activity-dao.js");
 const planDao = require("../../dao/plan-dao.js");
+const petProfileDao = require("../../dao/petProfile-dao.js");
+const userDao = require("../../dao/user-dao.js");
 
 const schema = {
   type: "object",
@@ -34,6 +36,21 @@ async function CreateActivity(req, res) {
       return;
     }
 
+    // Retrieve the user ID from the request object
+    const userId = req.user ? req.user.id : undefined;
+
+    // Check if user ID is present
+    if (!userId) {
+      res.status(401).json({
+        code: "unauthorized",
+        message: "User is not authenticated",
+      });
+      return;
+    }
+
+    // Get the list of pet profiles associated with the user
+    const userPetProfiles = userDao.get(userId).petProfiles;
+
     // Check if the associated plan exists
     const existingPlan = planDao.get(activity.planId);
     if (!existingPlan) {
@@ -43,7 +60,26 @@ async function CreateActivity(req, res) {
     });
     return;
     }
+
+    // Retrieve the pet profile associated with the plan
+    const associatedPetProfile = petProfileDao.getByPlanId(activity.planId);
+    if (!associatedPetProfile) {
+      res.status(404).json({
+        code: "petProfileNotFound",
+        message: `Pet profile associated with plan ${activity.planId} not found`,
+      });
+      return;
+    }
     
+    // Check if the pet profile associated with the plan is part of the user's pet profiles
+    if (!userPetProfiles.includes(associatedPetProfile.id)) {
+      res.status(403).json({
+        code: "forbidden",
+        message: "User is not authorized to create an activity for this pet profile",
+      });
+      return;
+    }
+
     // Create the activity
     activity = activityDao.create(activity);
 

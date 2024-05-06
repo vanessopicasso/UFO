@@ -20,6 +20,8 @@ function get(userId) {
 function create(user) {
   try {
     user.id = crypto.randomBytes(16).toString("hex");
+    // Initialize plans array
+    user.petProfiles = [];
     const filePath = path.join(userFolderPath, `${user.id}.json`);
     const fileData = JSON.stringify(user);
     fs.writeFileSync(filePath, fileData, "utf8");
@@ -72,10 +74,45 @@ function list() {
   }
 }
 
+// Method to add a pet profile to a user
+function addPetProfileToUser(userId, petProfileId) {
+  try {
+    const user = get(userId);
+    if (!user) {
+      throw { code: "userNotFound", message: `User ${userId} not found` };
+    }
+
+    user.petProfiles = user.petProfiles || [];
+    user.petProfiles.push(petProfileId);
+
+    update(user);
+  } catch (error) {
+    throw { code: "failedToAddPetProfileToUser", message: error.message };
+  }
+}
+
+// Method to remove a pet profile from a user
+function removePetProfileFromUser(userId, petProfileId) {
+  try {
+    const user = get(userId);
+    if (!user) {
+      throw { code: "userNotFound", message: `User ${userId} not found` };
+    }
+
+    user.petProfiles = user.petProfiles.filter((id) => id !== petProfileId);
+
+    update(user);
+  } catch (error) {
+    throw { code: "failedToRemovePetProfileFromUser", message: error.message };
+  }
+}
+
 module.exports = {
   get,
   create,
   update,
   remove,
   list,
+  addPetProfileToUser,
+  removePetProfileFromUser
 };

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const GetAbl = require("../abl/plan/get");
+const GetAbl = require("../abl/Plan/get");
 const ListAbl = require("../abl/Plan/list");
 const CreateAbl = require("../abl/Plan/create");
 const DeleteAbl = require("../abl/Plan/delete");

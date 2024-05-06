@@ -4,6 +4,7 @@ const ajv = new Ajv();
 addFormats(ajv);
 
 const petProfileDao = require("../../dao/petProfile-dao.js");
+const userDao = require("../../dao/user-dao.js");
 
 const schema = {
   type: "object",
@@ -14,14 +15,14 @@ const schema = {
     sex: {type: "string", enum: ["male", "female"]},
     birthDate: {type: "string", format: "date"},
     weight: { type: "number" },
-    adittionalDetails: { type: "string" },
+    additionalDetails: { type: "string" },
     profilePicture: { type: "object" }
   },
   required: ["id"],
   additionalProperties: false,
 };
 
-async function UpdateAbl(req, res) {
+async function UpdatePetProfile(req, res) {
   try {
     let petProfile = req.body;
 
@@ -32,6 +33,30 @@ async function UpdateAbl(req, res) {
         code: "dtoInIsNotValid",
         message: "dtoIn is not valid",
         validationError: ajv.errors,
+      });
+      return;
+    }
+
+    // Retrieve the user ID from the request object
+    const userId = req.user ? req.user.id : undefined;
+
+    // Check if user ID is present
+    if (!userId) {
+      res.status(401).json({
+        code: "unauthorized",
+        message: "User is not authenticated",
+      });
+      return;
+    }
+
+    // Get the list of pet profiles associated with the user
+    const userPetProfiles = userDao.get(userId).petProfiles;
+
+    // Check if the pet profile ID to be deleted exists in the user's list of pet profiles
+    if (!userPetProfiles.includes(reqParams.id)) {
+      res.status(403).json({
+        code: "forbidden",
+        message: "User is not authorized to delete this pet profile",
       });
       return;
     }
@@ -51,4 +76,4 @@ async function UpdateAbl(req, res) {
   }
 }
 
-module.exports = UpdateAbl;
+module.exports = UpdatePetProfile;

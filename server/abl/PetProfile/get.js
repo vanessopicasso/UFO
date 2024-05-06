@@ -14,7 +14,7 @@ const schema = {
   additionalProperties: false,
 };
 
-async function GetAbl(req, res) {
+async function GetPetProfile(req, res) {
   try {
     // get request query or body
     const reqParams = req.query?.id ? req.query : req.body;
@@ -46,4 +46,4 @@ async function GetAbl(req, res) {
   }
 }
 
-module.exports = GetAbl;
+module.exports = GetPetProfile;
