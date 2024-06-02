@@ -20,16 +20,15 @@ async function DeleteUser(req, res) {
     // Validate input
     const valid = ajv.validate(schema, reqParams);
     if (!valid) {
-      res.status(400).json({
+      return res.status(400).json({
         code: "dtoInIsNotValid",
         message: "dtoIn is not valid",
         validationError: ajv.errors,
       });
-      return;
     }
 
     // Remove user
-    userDao.remove(reqParams.id);
+    await userDao.remove(reqParams.id); // Await userDao.remove() to ensure completion
 
     res.json({});
   } catch (e) {

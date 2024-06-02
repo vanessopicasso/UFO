@@ -1,16 +1,28 @@
 const express = require("express");
 const router = express.Router();
 
-const GetAbl = require("../abl/User/get");
-const ListAbl = require("../abl/User/list");
-const CreateAbl = require("../abl/User/create");
-const UpdateAbl = require("../abl/User/update");
-const DeleteAbl = require("../abl/User/delete");
+const getUser = require("../abl/User/get");
+const listUsers = require("../abl/User/list");
+const createUser = require("../abl/User/create");
+const updateUser = require("../abl/User/update");
+const deleteUser = require("../abl/User/delete");
+const loginUser = require("../abl/User/login");
 
-router.get("/get", GetAbl); // Retrieves a specific user
-router.get("/list", ListAbl); // Lists all users
-router.post("/create", CreateAbl); // Creates a new user
-router.post("/update", UpdateAbl); // Updates an existing user
-router.post("/delete", DeleteAbl); // Deletes an existing user
+// Retrieve a specific user by ID
+router.get("/user/:id", getUser);
+
+// List all users
+router.get("/users", listUsers);
+
+// Create a new user
+router.post("/user", createUser);
+
+// Update an existing user by ID
+router.put("/user/:id", updateUser);
+
+// Delete an existing user by ID
+router.delete("/user/:id", deleteUser);
+
+router.post("/login", loginUser);
 
 module.exports = router;

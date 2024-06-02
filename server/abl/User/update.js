@@ -20,37 +20,35 @@ async function UpdateAbl(req, res) {
   try {
     let user = req.body;
 
-    // validate input
+    // Validate input
     const valid = ajv.validate(schema, user);
     if (!valid) {
-      res.status(400).json({
+      return res.status(400).json({
         code: "dtoInIsNotValid",
         message: "dtoIn is not valid",
         validationError: ajv.errors,
       });
-      return;
     }
 
-    const userList = userDao.list();
+    // Check if email already exists for another user
+    const userList = await userDao.list(); // Await userDao.list() to ensure completion
     const emailExists = userList.some(
       (u) => u.email === user.email && u.id !== user.id
     );
     if (emailExists) {
-      res.status(409).json({
+      return res.status(409).json({
         code: "emailAlreadyExists",
         message: `User with email ${user.email} already exists`,
       });
-      return;
     }
 
     // Update user
-    const updatedUser = userDao.update(user);
+    const updatedUser = await userDao.update(user); // Await userDao.update() to ensure completion
     if (!updatedUser) {
-      res.status(404).json({
+      return res.status(404).json({
         code: "userNotFound",
         message: `User ${user.id} not found`,
       });
-      return;
     }
 
     res.json(updatedUser);

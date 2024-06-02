@@ -20,22 +20,20 @@ async function GetUser(req, res) {
     // Validate input
     const valid = ajv.validate(schema, reqParams);
     if (!valid) {
-      res.status(400).json({
+      return res.status(400).json({
         code: "dtoInIsNotValid",
         message: "dtoIn is not valid",
         validationError: ajv.errors,
       });
-      return;
     }
 
     // Read user by given id
-    const user = userDao.get(reqParams.id);
+    const user = await userDao.get(reqParams.id); // Await userDao.get() to ensure completion
     if (!user) {
-      res.status(404).json({
+      return res.status(404).json({
         code: "userNotFound",
         message: `User ${reqParams.id} not found`,
       });
-      return;
     }
 
     res.json(user);

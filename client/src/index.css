@@ -1,8 +1,6 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: Georgia, serif; /* Changed font family */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -10,4 +8,75 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Custom modal styles */
+.custom-modal .modal-content {
+  background-color: #000000; /* Change this to your desired background color */
+  color: #c6f3ffff; /* Change text color if needed */
+  border-color: #b45f06; /* Change this to your desired border color */
+  border-width: 2px;
+}
+
+.custom-modal .modal-header,
+.custom-modal .modal-footer {
+  border: none; /* Remove default borders */
+  background-color: #000000; /* Header and footer background color */
+}
+
+.custom-modal .modal-body {
+  color: #c6f3ffff; /* Change text color in the body if needed */
+}
+
+.custom-modal .modal-header .modal-title,
+.custom-modal .modal-footer .btn {
+  color: #b45f06; /* Change text color in the header and footer buttons */
+}
+
+
+/* Input field */
+.custom-modal .form-control {
+  background-color: #000000; 
+  color: #b45f06;
+  border-color: #c6f3ffff;
+  border-width: 1px;
+  border-style: solid;
+  font-family: Georgia, serif;
+}
+
+/* Input field focused */
+.custom-modal .form-control:focus {
+  background-color: #000000;
+  color: #b45f06;
+  border: 1px solid #b45f06;
+  box-shadow: none;
+}
+
+/* Sign in button style */
+.custom-primary-button {
+  background-color: #c6f3ffff;
+  border-color: #c6f3ffff;
+}
+/* Sign in button hover */
+.custom-primary-button:hover {
+  background-color: #b45f06;
+  border-color: #b45f06;
+  color: #c6f3ffff; /* Remove the comma here */
+}
+
+/* Sign in text color */
+.custom-modal .modal-footer .btn {
+  color: black; /* Change text color in the footer buttons */
+}
+
+.custom-button {
+  background-color: #c6f3ffff; /* Same background color as the "Sign In" button */
+  border-color: #c6f3ffff; /* Same border color as the "Sign In" button */
+  color: black; /* Same text color as the "Sign In" button */
+}
+
+.custom-button:hover {
+  background-color: #b45f06; /* Same hover background color as the "Sign In" button */
+  border-color: #b45f06; /* Same hover border color as the "Sign In" button */
+  color: #c6f3ffff; /* Same hover text color as the "Sign In" button */
 }

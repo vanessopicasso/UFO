@@ -22,26 +22,25 @@ async function CreateUser(req, res) {
     // Validate input
     const valid = ajv.validate(schema, user);
     if (!valid) {
-      res.status(400).json({
+      return res.status(400).json({
         code: "dtoInIsNotValid",
         message: "dtoIn is not valid",
         validationError: ajv.errors,
       });
-      return;
     }
 
-    const userList = userDao.list();
+    // Check if email already exists
+    const userList = await userDao.list(); // Await userDao.list() to get the user list
     const emailExists = userList.some((u) => u.email === user.email);
     if (emailExists) {
-      res.status(409).json({
+      return res.status(409).json({
         code: "emailAlreadyExists",
         message: `User with email ${user.email} already exists`,
       });
-      return;
     }
 
     // Create user
-    user = userDao.create(user);
+    user = await userDao.create(user); // Await userDao.create(user) to create the user
     res.json(user);
   } catch (e) {
     res.status(500).json({ message: e.message });

@@ -1,14 +1,13 @@
-const fs = require("fs");
+const fs = require("fs").promises; // Using fs.promises for async file operations
 const path = require("path");
 const crypto = require("crypto");
 
 const userFolderPath = path.join(__dirname, "storage", "userList");
 
-// Method to read an user from a file
-function get(userId) {
+async function get(userId) {
   try {
     const filePath = path.join(userFolderPath, `${userId}.json`);
-    const fileData = fs.readFileSync(filePath, "utf8");
+    const fileData = await fs.readFile(filePath, "utf8");
     return JSON.parse(fileData);
   } catch (error) {
     if (error.code === "ENOENT") return null;
@@ -16,41 +15,35 @@ function get(userId) {
   }
 }
 
-// Method to write an user to a file
-function create(user) {
+async function create(user) {
   try {
     user.id = crypto.randomBytes(16).toString("hex");
-    // Initialize plans array
     user.petProfiles = [];
     const filePath = path.join(userFolderPath, `${user.id}.json`);
-    const fileData = JSON.stringify(user);
-    fs.writeFileSync(filePath, fileData, "utf8");
+    await fs.writeFile(filePath, JSON.stringify(user), "utf8");
     return user;
   } catch (error) {
     throw { code: "failedToCreateUser", message: error.message };
   }
 }
 
-// Method to update user in a file
-function update(user) {
+async function update(user) {
   try {
-    const currentUser = get(user.id);
+    const currentUser = await get(user.id);
     if (!currentUser) return null;
     const newUser = { ...currentUser, ...user };
     const filePath = path.join(userFolderPath, `${user.id}.json`);
-    const fileData = JSON.stringify(newUser);
-    fs.writeFileSync(filePath, fileData, "utf8");
+    await fs.writeFile(filePath, JSON.stringify(newUser), "utf8");
     return newUser;
   } catch (error) {
     throw { code: "failedToUpdateUser", message: error.message };
   }
 }
 
-// Method to remove an user from a file
-function remove(userId) {
+async function remove(userId) {
   try {
     const filePath = path.join(userFolderPath, `${userId}.json`);
-    fs.unlinkSync(filePath);
+    await fs.unlink(filePath);
     return {};
   } catch (error) {
     if (error.code === "ENOENT") {
@@ -60,50 +53,55 @@ function remove(userId) {
   }
 }
 
-// Method to list users in a folder
-function list() {
+async function list() {
   try {
-    const files = fs.readdirSync(userFolderPath);
-    const userList = files.map((file) => {
-      const fileData = fs.readFileSync(path.join(userFolderPath, file), "utf8");
+    const files = await fs.readdir(userFolderPath);
+    const userList = await Promise.all(files.map(async (file) => {
+      const fileData = await fs.readFile(path.join(userFolderPath, file), "utf8");
       return JSON.parse(fileData);
-    });
+    }));
     return userList;
   } catch (error) {
     throw { code: "failedToListUsers", message: error.message };
   }
 }
 
-// Method to add a pet profile to a user
-function addPetProfileToUser(userId, petProfileId) {
+async function addPetProfileToUser(userId, petProfileId) {
   try {
-    const user = get(userId);
+    const user = await get(userId);
     if (!user) {
       throw { code: "userNotFound", message: `User ${userId} not found` };
     }
-
     user.petProfiles = user.petProfiles || [];
     user.petProfiles.push(petProfileId);
-
-    update(user);
+    await update(user);
   } catch (error) {
     throw { code: "failedToAddPetProfileToUser", message: error.message };
   }
 }
 
-// Method to remove a pet profile from a user
-function removePetProfileFromUser(userId, petProfileId) {
+async function removePetProfileFromUser(userId, petProfileId) {
   try {
-    const user = get(userId);
+    const user = await get(userId);
     if (!user) {
       throw { code: "userNotFound", message: `User ${userId} not found` };
     }
-
     user.petProfiles = user.petProfiles.filter((id) => id !== petProfileId);
-
-    update(user);
+    await update(user);
   } catch (error) {
     throw { code: "failedToRemovePetProfileFromUser", message: error.message };
+  }
+}
+
+async function authenticateUser(username, email) {
+  try {
+    const userList = await list();
+    const authenticatedUser = userList.find(
+      (user) => user.username === username && user.email === email
+    );
+    return authenticatedUser || null;
+  } catch (error) {
+    throw { code: "authenticationFailed", message: error.message };
   }
 }
 
@@ -114,5 +112,6 @@ module.exports = {
   remove,
   list,
   addPetProfileToUser,
-  removePetProfileFromUser
+  removePetProfileFromUser,
+  authenticateUser
 };
